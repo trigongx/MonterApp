@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">MonterApp</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Заявки</string>
+    <string name="title_profile">Профиль</string>
+    <string name="login">Логин</string>
+    <string name="password">Пароль</string>
+    <string name="enter">Войти</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="detail_info">Детальная ифнормация</string>
+    <string name="application_status">Статус заявки</string>
+    <string name="this_field_must_be_filled">Это поле должно быть заполнено</string>
+    <string name="not_done">Не выполнен</string>
+    <string name="done">Выполнен</string>
+    <string name="reason">Причина заявки:</string>
+</resources>

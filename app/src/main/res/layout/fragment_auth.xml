@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.auth.AuthFragment">
+
+    <ImageView
+        android:id="@+id/img_logo_nesk"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/logo_nesk"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="120dp"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        android:id="@+id/tv_my_svet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="мой свет"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="@id/img_logo_nesk"
+        app:layout_constraintTop_toBottomOf="@id/img_logo_nesk"
+        app:layout_constraintEnd_toEndOf="@id/img_logo_nesk"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginTop="32dp"
+        android:id="@+id/loginContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxStrokeColor="@color/purple_500"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_my_svet"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="32dp"
+        android:hint="@string/login"
+        app:errorEnabled="true"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:imeOptions="actionNext"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/passwordContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/loginContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="32dp"
+        app:boxStrokeColor="@color/purple_500"
+        android:hint="@string/password"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:imeOptions="actionDone"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/btn_login"
+        app:layout_constraintStart_toStartOf="@id/passwordContainer"
+        app:layout_constraintTop_toBottomOf="@id/passwordContainer"
+        app:layout_constraintEnd_toEndOf="@id/passwordContainer"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="@string/enter"
+        android:textSize="16sp"
+        android:layout_marginTop="32dp"
+        android:backgroundTint="@color/purple_500"
+        android:layout_marginHorizontal="32dp"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

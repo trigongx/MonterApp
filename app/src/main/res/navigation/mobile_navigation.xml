@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_profile">
+
+    <fragment
+        android:id="@+id/navigation_dashboard"
+        android:name="com.example.monterapp.presentation.dashboard.ApplicationFragment"
+        android:label="@string/title_dashboard"
+        tools:layout="@layout/fragment_application" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.example.monterapp.presentation.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="com.example.monterapp.presentation.auth.AuthFragment"
+        android:label="fragment_auth"
+        tools:layout="@layout/fragment_auth" />
+    <fragment
+        android:id="@+id/detailsApplicationFragment"
+        android:name="com.example.monterapp.presentation.details.DetailsApplicationFragment"
+        android:label="@string/detail_info"
+        tools:layout="@layout/fragment_details_application" />
+</navigation>
