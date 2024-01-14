@@ -1,11 +1,15 @@
 package com.example.monterapp.presentation.details
 
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
@@ -18,7 +22,10 @@ import com.example.monterapp.data.models.Application
 import com.example.monterapp.data.models.CompletedApplication
 import com.example.monterapp.databinding.FragmentDetailsApplicationBinding
 import com.example.monterapp.utils.KEYS
+import com.github.drjacky.imagepicker.ImagePicker
+import com.github.drjacky.imagepicker.constant.ImageProvider
 import kotlinx.coroutines.launch
+
 
 class DetailsApplicationFragment :
     BaseFragment<FragmentDetailsApplicationBinding,DetailsApplicationViewModel>() {
@@ -34,14 +41,17 @@ class DetailsApplicationFragment :
     private var application: Application? = null
     private val completedApplicationDao = App.database.getCompletedApplicationDao()
     private val applicationDao = App.database.getApplicationDao()
-    private val launcher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()){
-            if (it.resultCode == Activity.RESULT_OK && it.data != null){
-                val uri: Uri? = it.data?.data
+    private var launcher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == RESULT_OK) {
+                val uri: Uri? = result.data?.data
+                binding.imgMonterPhoto.load(uri)
                 imageUrl = uri.toString()
-                binding.imgMonterPhoto.load(uri.toString())
+                Log.d("ololo", "$imageUrl")
+            } else if (result.resultCode == ImagePicker.RESULT_ERROR) {
+                Toast.makeText(requireContext(), "Не удалось сохранить изображение", Toast.LENGTH_SHORT).show()
             }
-    }
+        }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,12 +62,15 @@ class DetailsApplicationFragment :
     }
 
     private fun initListener(application: Application) {
+
         binding.imgMonterPhoto.setOnClickListener {
-            val intent = Intent()
-            intent.type = "image/*"
-            intent.action = Intent.ACTION_GET_CONTENT
-            launcher.launch(intent)
+            ImagePicker.Companion.with(requireActivity())
+                .crop()
+                .maxResultSize(1080,1080)
+                .provider(ImageProvider.BOTH)
+                .createIntentFromDialog { launcher.launch(it) }
         }
+
         binding.btnSaveApplication.setOnClickListener {
             val commentText = binding.etMontersComment.text.toString().trim()
             val dateText = binding.etCompletedDate.text.toString().trim()
@@ -93,6 +106,17 @@ class DetailsApplicationFragment :
             } else {
                 Toast.makeText(requireContext(), "Невыполненная заявка не может быть сохранена", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK){
+            val resultUri = data?.data
+            imageUrl = resultUri.toString()
+            binding.imgMonterPhoto.load(resultUri)
+        } else {
+            Toast.makeText(requireContext(), "Не удалось сохранить изображение", Toast.LENGTH_SHORT).show()
         }
     }
     private fun checkApplicationStatus(statusText:String):Boolean{
