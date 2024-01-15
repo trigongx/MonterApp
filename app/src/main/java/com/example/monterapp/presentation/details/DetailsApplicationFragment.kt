@@ -2,6 +2,7 @@ package com.example.monterapp.presentation.details
 
 import android.app.Activity
 import android.app.Activity.RESULT_OK
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -25,6 +26,9 @@ import com.example.monterapp.utils.KEYS
 import com.github.drjacky.imagepicker.ImagePicker
 import com.github.drjacky.imagepicker.constant.ImageProvider
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 
 class DetailsApplicationFragment :
@@ -36,7 +40,10 @@ class DetailsApplicationFragment :
     override fun setViewModel(): DetailsApplicationViewModel =
         DetailsApplicationViewModel()
 
-    private var imageUrl:String? = null
+    private var imageUrl: String? = null
+    private var formattedDate:String? = null
+    private var calendar: Calendar = Calendar.getInstance()
+
     private val pref: Pref by lazy { Pref(requireContext()) }
     private var application: Application? = null
     private val completedApplicationDao = App.database.getCompletedApplicationDao()
@@ -49,7 +56,11 @@ class DetailsApplicationFragment :
                 imageUrl = uri.toString()
                 Log.d("ololo", "$imageUrl")
             } else if (result.resultCode == ImagePicker.RESULT_ERROR) {
-                Toast.makeText(requireContext(), "Не удалось сохранить изображение", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Не удалось сохранить изображение",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
@@ -66,24 +77,28 @@ class DetailsApplicationFragment :
         binding.imgMonterPhoto.setOnClickListener {
             ImagePicker.Companion.with(requireActivity())
                 .crop()
-                .maxResultSize(1080,1080)
+                .maxResultSize(1080, 1080)
                 .provider(ImageProvider.BOTH)
                 .createIntentFromDialog { launcher.launch(it) }
+        }
+        binding.completedDateContainer.setEndIconOnClickListener {
+            showDatePickerDialog()
         }
 
         binding.btnSaveApplication.setOnClickListener {
             val commentText = binding.etMontersComment.text.toString().trim()
             val dateText = binding.etCompletedDate.text.toString().trim()
             val applicationStatusText = binding.spinnerApplicationStatus.selectedItem.toString()
-            if (commentText.isEmpty()){
-                binding.montersCommentContainer.error = getString(R.string.this_field_must_be_filled)
+            if (commentText.isEmpty()) {
+                binding.montersCommentContainer.error =
+                    getString(R.string.this_field_must_be_filled)
                 return@setOnClickListener
             } else binding.montersCommentContainer.error = null
-            if (dateText.isEmpty()){
+            if (dateText.isEmpty()) {
                 binding.completedDateContainer.error = getString(R.string.this_field_must_be_filled)
                 return@setOnClickListener
             } else binding.completedDateContainer.error = null
-            if (applicationStatusText == getString(R.string.done)){
+            if (applicationStatusText == getString(R.string.done)) {
                 val comletedApplication = CompletedApplication(
                     address = binding.tvAddress.text.toString(),
                     regionName = binding.tvRegionName.text.toString(),
@@ -104,27 +119,59 @@ class DetailsApplicationFragment :
                     Toast.makeText(requireContext(), "Заявка сохранена", Toast.LENGTH_SHORT).show()
                 }
             } else {
-                Toast.makeText(requireContext(), "Невыполненная заявка не может быть сохранена", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Невыполненная заявка не может быть сохранена",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
 
+    private fun showDatePickerDialog() {
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, year, month, dayOfMonth ->
+                // Обработка выбранной даты
+                calendar.set(year, month, dayOfMonth)
+
+                // Форматирование даты
+                val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                formattedDate = dateFormat.format(calendar.time)
+
+                // Установка отформатированной даты в EditText
+                binding.etCompletedDate.setText(formattedDate)
+
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+
+        // Опционально: установка ограничений на дату (например, минимальная и максимальная дата)
+        datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
+
+        datePickerDialog.show()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK){
+        if (resultCode == Activity.RESULT_OK) {
             val resultUri = data?.data
             imageUrl = resultUri.toString()
             binding.imgMonterPhoto.load(resultUri)
         } else {
-            Toast.makeText(requireContext(), "Не удалось сохранить изображение", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Не удалось сохранить изображение", Toast.LENGTH_SHORT)
+                .show()
         }
     }
-    private fun checkApplicationStatus(statusText:String):Boolean{
+
+    private fun checkApplicationStatus(statusText: String): Boolean {
         return statusText == getString(R.string.done)
     }
 
     private fun getDataFromApplicationFragment() {
-        if (application != null){
+        if (application != null) {
             binding.tvReason.text = application!!.reason
             binding.tvAddress.text = application!!.address
             binding.tvRegionName.text = application!!.regionName
@@ -133,5 +180,4 @@ class DetailsApplicationFragment :
             binding.tvDate.text = application!!.date
         }
     }
-
 }
